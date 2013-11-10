@@ -2,14 +2,13 @@
 
 sync_base=$(cat $HOME/.sync 2> /dev/null)
 tracker=$sync_base/.tracks
-old_path=$PWD
 
 function go_sync {
 	cd "$sync_base"
 }
 
 function go_back {
-	cd "$old_path"
+	cd -
 }
 
 function check_install {
