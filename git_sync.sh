@@ -62,8 +62,8 @@ function backup {
     exit 1
   fi
 
-  name=$1
-  folder=$(grep "$name" $tracker | awk -F= '{ print $1 }')
+  local name=$1
+  local folder=$(grep "$name" $tracker | awk -F= '{ print $1 }')
   
   if [[ -e $folder ]]
   then
@@ -95,8 +95,8 @@ function restore {
     exit 1
   fi
 
-  name=$1
-  folder=$(grep "$name" $tracker | awk -F= '{ print $1 }')
+  local name=$1
+  local folder=$(grep "$name" $tracker | awk -F= '{ print $1 }')
   
   [[ ! -e $folder ]] &&  mkdir -p "$folder"
 
