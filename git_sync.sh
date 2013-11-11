@@ -8,7 +8,7 @@ function go_sync {
 }
 
 function go_back {
-  cd -
+  cd - 
 }
 
 function check_install {
@@ -26,6 +26,9 @@ function check_install {
   fi
 }
 
+function track_to_folder {
+  grep "=$1$" $tracker | awk -F= '{ print $1 }'
+}
 
 function track {
   if [ ! $# -eq 2 ]
@@ -63,7 +66,7 @@ function backup {
   fi
 
   local name=$1
-  local folder=$(grep "^$name=" $tracker | awk -F= '{ print $1 }')
+  local folder=$(track_to_folder $name)
   
   if [[ -e $folder ]]
   then
@@ -87,7 +90,6 @@ function backup {
 }
 
 
-#DRY
 function restore {
   if [ ! $# -eq 1 ]
   then
@@ -96,7 +98,7 @@ function restore {
   fi
 
   local name=$1
-  local folder=$(grep "$name" $tracker | awk -F= '{ print $1 }')
+  local folder=$(track_to_folder $name)
   
   [[ ! -e $folder ]] &&  mkdir -p "$folder"
 
