@@ -63,7 +63,7 @@ function backup {
   fi
 
   local name=$1
-  local folder=$(grep "$name" $tracker | awk -F= '{ print $1 }')
+  local folder=$(grep "^$name=" $tracker | awk -F= '{ print $1 }')
   
   if [[ -e $folder ]]
   then
@@ -115,6 +115,13 @@ function init {
   check_install
 }
 
+function list_tracks {
+  while read entry
+  do
+    echo $entry | awk -F"=" '{ print $2 " \t=> " $1 }'
+  done < "$sync_base/.tracks"
+}
+
 case $1 in
   "init")
     shift
@@ -131,6 +138,9 @@ case $1 in
   "track")
     shift
     track $@
+    ;;
+  "tracks")
+    list_tracks
     ;;
   *)
     echo "Usage:"
