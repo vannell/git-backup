@@ -51,9 +51,15 @@ track() {
   else
     go_sync
     mkdir "$name"
-    echo "$folder=$name" >> $tracker
-    git add $name $tracker
-    git commit -q -m "Adding new tracking: $name"
+    echo "$(readlink -f "$folder")=$name" >> $tracker
+    git add "$name" .tracks
+    git add ".tracks"
+    git commit -q -m "Track: $name"
+    #separate backup folder in branches, it should be easier to manipulate them
+    #individually after that.
+    git checkout -b "$name"
+    git commit -q -m "Initial commit: $name"
+    git checkout master
     go_back
   fi
 }
@@ -76,12 +82,16 @@ backup() {
     #c : skip on checksum and not mod time or size
     #z : compress during transfer
     #NOTE: need to experiment --delete option
-    rsync -arcuzv --delete "$folder/" "$sync_base/$name"
 
+    local timestamp=$(date "+%Y-%m-%d %H:%M:%S")
     go_sync
-    timestamp=$(date "+%Y-%m-%d %H:%M:%S")
+    git checkout "$name"
+
+    rsync -arcuzv --delete "$folder/" "$sync_base/$name"
     git add -A .
     git commit -q -m "$timestamp"
+
+    git checkout master
     go_back
   else
     echo "$folder does not exist on your system"
@@ -102,7 +112,16 @@ restore() {
   
   [[ ! -e $folder ]] &&  mkdir -p "$folder"
 
-  rsync -arcuzv --delete "$sync_base/$name/" "$folder/"
+  #NOTE: fix this awful thing
+  go_sync
+  git checkout "$name"
+  go_back
+
+  rsync -arcuzv --delete "$name/" "$folder/"
+
+  go_sync
+  git checkout master
+  go_back
 }
 
 init() {
