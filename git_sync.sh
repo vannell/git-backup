@@ -3,15 +3,15 @@
 sync_base=$(cat $HOME/.sync 2> /dev/null)
 tracker=$sync_base/.tracks
 
-function go_sync {
+go_sync() {
   cd "$sync_base"
 }
 
-function go_back {
+go_back() {
   cd - 
 }
 
-function check_install {
+check_install() {
   if [ ! -e $sync_base ]
   then
     mkdir -p $sync_base
@@ -26,11 +26,11 @@ function check_install {
   fi
 }
 
-function track_to_folder {
+track_to_folder() {
   grep "=$1$" $tracker | awk -F= '{ print $1 }'
 }
 
-function track {
+track() {
   if [ ! $# -eq 2 ]
   then
     echo "track <path> <track_name>"
@@ -58,7 +58,7 @@ function track {
   fi
 }
 
-function backup {
+backup() {
   if [ ! $# -eq 1 ]
   then
     echo "backup <track_name>"
@@ -90,7 +90,7 @@ function backup {
 }
 
 
-function restore {
+restore() {
   if [ ! $# -eq 1 ]
   then
     echo "restore <track_name>"
@@ -105,7 +105,7 @@ function restore {
   rsync -arcuzv --delete "$sync_base/$name/" "$folder/"
 }
 
-function init {
+init() {
   if [ $1 ]
   then
     sync_base=$1
@@ -117,7 +117,7 @@ function init {
   check_install
 }
 
-function list_tracks {
+list_tracks() {
   while read entry
   do
     echo $entry | awk -F"=" '{ print $2 " \t=> " $1 }'
