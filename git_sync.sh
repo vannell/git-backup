@@ -50,16 +50,14 @@ track() {
     exit 1
   else
     go_sync
-    mkdir "$name"
     echo "$(readlink -f "$folder")=$name" >> $tracker
-    git add "$name" .tracks
     git add ".tracks"
+    mkdir "$name" && touch "$name/.gitkeep"
+    git add "$name/.gitkeep"
     git commit -q -m "Track: $name"
     #separate backup folder in branches, it should be easier to manipulate them
     #individually after that.
-    git checkout -b "$name"
-    git commit -q -m "Initial commit: $name"
-    git checkout master
+    git branch $name
     go_back
   fi
 }
