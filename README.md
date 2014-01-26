@@ -6,7 +6,7 @@ Little script aiming to combine power of git to track history on backup and rsyn
 Warning
 -------
 
-Work in progress and completely untested. Use this for test or development purpose only at this time.
+Work in progress and partially untested. Use this for test or development purpose only at this time.
 
 Usage
 -----
@@ -20,10 +20,14 @@ Usage
     # Launch periodic backup for a tracked folder
     $ git_backup backup alias_for_folder
 
+    # Restore last known backup for a tracked folder
+    $ git_backup restore alias_for_folder
+
 Todo
 ----
 
 * Allow to forget old backup 
 * Allow to sync on remote machine
+* Allow multiple sync repo
 * ...
 

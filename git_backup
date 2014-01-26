@@ -4,6 +4,7 @@ sync_base=$(cat $HOME/.sync 2> /dev/null)
 tracker=$sync_base/.tracks
 
 go_sync() {
+    echo "going into $sync_base"
   cd "$sync_base"
 }
 
@@ -37,8 +38,8 @@ track() {
     exit 1
   fi
 
-  folder=$1
-  name=$2
+  local abs_folder=$(make_absolute "$1")
+  local name=$2
 
   #check track name is not already in use
   if [[ $name =~ "/" ]]
@@ -49,8 +50,9 @@ track() {
     echo "Have already a track name called : $name"
     exit 1
   else
+    #get absolute path before changing from working directory
     go_sync
-    echo "$(readlink -f "$folder")=$name" >> $tracker
+    echo "$abs_folder=$name" >> $tracker
     git add ".tracks"
     mkdir "$name" && touch "$name/.gitkeep"
     git add "$name/.gitkeep"
@@ -131,6 +133,7 @@ init() {
   fi
 
   make_absolute $sync_base > $HOME/.sync 
+  sync_base=$(cat $HOME/.sync)
   check_install
 }
 
