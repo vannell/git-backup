@@ -115,7 +115,7 @@ restore() {
   git checkout "$name"
   go_back
 
-  rsync -arcuzv --delete "$name/" "$folder/"
+  rsync -arcuzv --delete "$sync_base/$name/" "$folder/"
 
   go_sync
   git checkout master
