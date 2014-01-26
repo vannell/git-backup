@@ -130,7 +130,7 @@ init() {
     sync_base=$PWD
   fi
 
-  echo $sync_base > $HOME/.sync 
+  make_absolute $sync_base > $HOME/.sync 
   check_install
 }
 
@@ -139,6 +139,45 @@ list_tracks() {
   do
     echo $entry | awk -F"=" '{ print $2 " \t=> " $1 }'
   done < "$sync_base/.tracks"
+}
+
+# === utility functions ===
+
+#As readlink is not available on all distro or OSX, provide a portable way to get an 
+#absolute path from a relative one.
+make_absolute() {
+  local ret=false
+  local rel_path=$1
+
+  if [[ ! -z $rel_path ]]; then
+    #strip eventual last slash
+    rel_path=${rel_path%/}
+
+    if [ "$rel_path" = "" ]; then
+      rel_path="/"
+    fi
+
+    base_name=${rel_path##*/}
+    rel_dir=${rel_path%$base_name}
+
+    if [[ $rel_dir = "" ]]; then
+        rel_dir="."
+    fi
+
+    if cd -P "$rel_dir" 1>/dev/null; then
+      #we jump in the directory and use $PWD
+      if [[ $(pwd) = "/" ]]; then
+        echo "/$base_name"
+      else
+        echo "$(pwd)/$base_name"
+      fi
+
+      cd - 1>&2 > /dev/null #get back to OLD_PATH
+      ret=true
+    fi
+  fi
+
+  $ret
 }
 
 case $1 in
