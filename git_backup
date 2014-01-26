@@ -4,7 +4,6 @@ sync_base=$(cat $HOME/.sync 2> /dev/null)
 tracker=$sync_base/.tracks
 
 go_sync() {
-    echo "going into $sync_base"
   cd "$sync_base"
 }
 
@@ -13,11 +12,6 @@ go_back() {
 }
 
 check_install() {
-  if [ ! -e $sync_base ]
-  then
-    mkdir -p $sync_base
-  fi
-
   if [ ! -d $sync_base/.git ]
   then
     go_sync
@@ -131,6 +125,12 @@ init() {
   else
     sync_base=$PWD
   fi
+
+  if [ ! -e $sync_base ]
+  then
+    mkdir -p $sync_base
+  fi
+
 
   make_absolute $sync_base > $HOME/.sync 
   sync_base=$(cat $HOME/.sync)
